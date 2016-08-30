@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../static/css/main.css">
+    <title>Title</title>
+</head>
+<body>
+<form method="POST">
+    <div>{%  if name %} {{ name }} {% endif %}</div>
+ <div>{{ form.name.label }}:  {{form.name(id='my-text-field')}}</div>
+ <div>{{ form.story.label }}: {{ form.story(class="css_class")}} </div>
+ {{ form.submit() }}
+</form>
+
+</body>
+</html>

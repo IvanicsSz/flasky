@@ -1,0 +1,32 @@
+.css_class{
+    width : 50%;
+    box-sizing: border-box;
+    background-color:#3e8f3e;
+}
+
+textarea {
+    width: 100%;
+    height: 150px;
+    padding: 12px 20px;
+    box-sizing: border-box;
+    border: 2px solid #2d6987;
+    border-radius: 4px;
+    background-color: #ac2925;
+    resize: none;
+}
+
+#checkout form#my-text-field {
+  width: 100%;
+    height: 150px;
+    background-color: #d58512;
+    resize: none;
+}
+
+select {
+    width: 100%;
+    padding: 16px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #2a62bc;
+}
+
