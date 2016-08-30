@@ -1,7 +1,8 @@
 from flask import Flask, render_template, session, redirect, url_for
 from datetime import datetime
-from flask_peewee.db import Database
-
+# from flask_peewee.db import Database
+from peewee import *
+import psycopg2
 from flask_wtf import Form
 from wtforms import StringField, SubmitField, TextAreaField, validators
 from wtforms.validators import DataRequired, Length
@@ -17,8 +18,25 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 
 # some changes
-db = Database(app)
+db = PostgresqlDatabase('flask', **{'user': "szilard", 'host': 'localhost', 'port': 5432,
+                                              'password': '753951'})
+db.connect()
 
+class BaseModel(Model):
+    """A base model that will use our Postgresql database"""
+
+    class Meta:
+        database = db
+
+
+class Person(BaseModel):
+    first_name = CharField()
+    last_name = CharField()
+
+
+# List the tables here what you want to create...
+db.drop_tables([Person], safe=True)
+db.create_tables([Person], safe=True)
 
 class NameForm(Form):
     name = StringField(u'What is your name?', validators=[DataRequired()])
@@ -36,6 +54,8 @@ def index():
     # print(form.validate_on_submit())
     if form.name.data:  # if form.validate_on_submit():
         session['name'] = form.name.data
+        jani = Person.create(first_name=form.name.data, last_name="Jani")
+        jani.save()
         return redirect(url_for('index'))
     return render_template('index.html', form=form, name=session.get('name'))
 
