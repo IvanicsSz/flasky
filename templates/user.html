@@ -5,9 +5,17 @@
     <title>Title</title>
 </head>
 <body>
+<h2>Login</h2>
+  {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
 <form method="POST">
-    <p> {{ user }}</p>
- <div style="color:#0000FF">{{ form.login.label }}:  {{form.login()}}</div>
+    <p> {{ user }}  {{ error }}</p>
+    <div style="color:#0000FF">{{ form.username.label }}:  {{form.username()}}</div>
+    <div style="color:#0000FF">{{ form.password.label }}:  {{form.password()}}</div>
+    {{ form.submit() }}
+ </div>
+  {% for message in get_flashed_messages() %}
+    <div class=flash>{{ message }}</div>
+  {% endfor %}
 
 </form>
 </body>

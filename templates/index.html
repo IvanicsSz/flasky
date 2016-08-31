@@ -10,7 +10,14 @@
     <div>{%  if name %} {{ name }} {% endif %}</div>
  <div>{{ form.name.label }}:  {{form.name(id='my-text-field')}}</div>
  <div>{{ form.story.label }}: {{ form.story(class="css_class")}} </div>
- {{ form.submit() }}
+
+<div class=metanav>
+  {% if not session.logged_in %}
+    <a href="{{ url_for('login') }}">log in</a>
+  {% else %}
+    <a href="{{ url_for('logout') }}">log out</a>
+  {% endif %}
+  </div>
 </form>
 
 </body>
