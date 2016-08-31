@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    <form method="post" action="/username">
+        <label>Select a user by id:</label>
+        <input name="id" type="number"/>
+        <input type="submit"/>
+
+    </form>
+  {% for user in entries %}
+    <li>{{ user.user }}  {{ user.story }}</li>
+  {% endfor %}
+
+</body>
+</html>

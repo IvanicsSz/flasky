@@ -1,76 +1,99 @@
-from flask import Flask, render_template, session, redirect, url_for
-from datetime import datetime
-# from flask_peewee.db import Database
-from peewee import *
-import psycopg2
-from flask_wtf import Form
-from wtforms import StringField, SubmitField, TextAreaField, validators
-from wtforms.validators import DataRequired, Length
+import os
+import sqlite3
+from flask import Flask, request, session, g, redirect, url_for, abort, \
+     render_template, flash
 
-DATABASE = {
-    'name': 'example.db',
-    'engine': 'peewee.SqliteDatabase',
-}
-DEBUG = True
-SECRET_KEY = 'ssshhhh'
+# create our little application :)
 app = Flask(__name__)
-# app.config['SECRET_KEY'] = 'hard to guess'
 app.config.from_object(__name__)
 
-# some changes
-db = PostgresqlDatabase('flask', **{'user': "szilard", 'host': 'localhost', 'port': 5432,
-                                              'password': '753951'})
-db.connect()
+# Load default config and override config from an environment variable
+app.config.update(dict(
+    DATABASE=os.path.join(app.root_path, 'flaskr.db'),
+    SECRET_KEY='development key',
+    USERNAME='admin',
+    PASSWORD='default'
+))
+app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 
-class BaseModel(Model):
-    """A base model that will use our Postgresql database"""
+@app.route('/', methods=["GET", "POST"])
+def show_entries():
 
-    class Meta:
-        database = db
+    if request.method == "POST":
+        data = request.form
+        db = get_db()
+        print(data['user_name'], data['story'])
+        db.execute('insert into entries (user, story) values (?, ?)', [i for i in data.values()])
+        db.commit()
+        return render_template('username.html')
+    return render_template('show_entries.html' )
+    # return redirect(url_for('username'))
 
+@app.route('/username', methods=["GET", "POST"])
+def username():
+    # data['user_name'] = request.form['user_name']
+    # data['story'] = request.form['story']
+    #
+    db =get_db()
 
-class Person(BaseModel):
-    first_name = CharField()
-    last_name = CharField()
+    if request.method == "POST":
+        cur = db.execute('select id, user, story from entries where id={0} order by id desc'.format(request.form['id']))
+        entries = cur.fetchall()
+        return render_template('username.html', entries=entries)
 
+    else:
+        cur = db.execute('select id, user, story from entries order by id desc')
+        entries = cur.fetchall()
+        return render_template('username.html', entries=entries)
+    # user = name
 
-# List the tables here what you want to create...
-db.drop_tables([Person], safe=True)
-db.create_tables([Person], safe=True)
+def connect_db():
+    """Connects to the specific database."""
+    rv = sqlite3.connect(app.config['DATABASE'])
+    rv.row_factory = sqlite3.Row
+    return rv
 
-class NameForm(Form):
-    name = StringField(u'What is your name?', validators=[DataRequired()])
-    story = TextAreaField(u'Second message', validators=[DataRequired()])
-    submit = SubmitField('Submit')
+def init_db():
+    db = get_db()
+    with app.open_resource('schema.sql', mode='r') as f:
+        db.cursor().executescript(f.read())
+    db.commit()
 
+@app.cli.command('initdb')
+def initdb_command():
+    """Initializes the database."""
+    init_db()
+    print('Initialized the database.')
 
-class LoginForm(Form):
-    login = StringField(u'What is your name?', validators=[DataRequired()])
+def get_db():
+    """Opens a new database connection if there is none yet for the
+    current application context.
+    """
+    if not hasattr(g, 'sqlite_db'):
+        g.sqlite_db = connect_db()
+    return g.sqlite_db
 
+# Query runner
+def query_db(query, args=(), one=False):
+    db = get_db()
+    cur = db.execute(query, args)
+    rv = cur.fetchall()
+    db.commit()
+    cur.close()
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    form = NameForm()
-    # print(form.validate_on_submit())
-    if form.name.data:  # if form.validate_on_submit():
-        session['name'] = form.name.data
-        jani = Person.create(first_name=form.name.data, last_name="Jani")
-        jani.save()
-        return redirect(url_for('index'))
-    return render_template('index.html', form=form, name=session.get('name'))
+    # return (rv if rv else None) if one else rv
+    return (rv[0] if rv else None) if one else rv
 
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
-    user = session.get('name')
-    return render_template('user.html', form=form, user=user)
-
-
-@app.route('/user/<name>')
-def user(name):
-    return render_template('user.html', name=datetime.utcnow())
+@app.teardown_appcontext
+def close_db(error):
+    """Closes the database again at the end of the request."""
+    if hasattr(g, 'sqlite_db'):
+        g.sqlite_db.close()
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    with app.app_context():
+        # init_db()
+        connect_db()
+        get_db()
+        app.run(debug=True)
