@@ -1,6 +1,5 @@
 from flask import Flask, render_template, session, redirect, url_for, g, request,flash, make_response
 from datetime import datetime
-import codecs, json
 from peewee import *
 from psycopg2 import connect
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
@@ -44,16 +43,10 @@ def close_db(error):
     if hasattr(g, 'postgres_db'):
         g.postgres_db.close()
 
-
-
 db.connect()
 
 db.drop_tables([Story], safe=True)
 db.create_tables([Story], safe=True)
-
-
-
-
 
 @app.route('/', methods=['GET', 'POST'])
 def index():

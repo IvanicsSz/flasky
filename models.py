@@ -13,5 +13,10 @@ class BaseModel(Model):
 
 
 class Story(BaseModel):
-    first_name = CharField()
-    last_name = CharField()
+    story_title = TextField()
+    user_title = TextField()
+    acceptance_criteria = TextField()
+    business_value = BigIntegerField()
+    estimation = SmallIntegerField()
+    status = CharField()
+    date = DateTimeField(default=datetime.utcnow())

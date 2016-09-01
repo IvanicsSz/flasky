@@ -1,10 +1,9 @@
 
 
-/*.css_class{*/
-    /*width : 50%;*/
-    /*background-color: #8f8781;*/
-
-/*}*/
+.css_class{
+    width : 100%;
+    border: 2px solid #363887;
+}
 
 .header-container {
     border-bottom: 5px solid rgba(158, 175, 180, 0.95);
@@ -38,18 +37,15 @@ textarea {
 
 
 #checkout form#my-text-field {
-  width: 100%;
-    /*color: #5863b4;*/
-    height: 150px;
-    background-color: #cfd0d5;
+    width: 100%;
     resize: none;
 }
 
 select {
-    width: 100%;
-    padding: 16px 20px;
+    width: 20%;
+    padding: 12px 12px;
     border: none;
     border-radius: 4px;
-    background-color: #ff9555;
+    background-color: #8d9fb4;
 }
 
