@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="../static/css/main.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <title>Title</title>
 </head>
 <body>
@@ -15,7 +15,7 @@
               {% if not session.logged_in %}
                 <a  href="{{ url_for('login', class="title") }}">LOGIN</a>
               {% else %}
-                <a  href="{{ url_for('logout', class="title") }}">LOGOUT</a>
+               <a  href="{{ url_for('logout', class="title") }}">LOGOUT</a>
               {% endif %}
 {#                <li><a href="{{ url_for('login') }}">Login</a></li>#}
 {#                <li><a href="{{ url_for('logout') }}">Logout</a></li>#}
@@ -26,11 +26,12 @@
     </header>
 </div>
 {% block body %}
-<form method="POST">
+<form method="POST" action="">
+    {{ form.hidden_tag() }}
     <div>{%  if name %} {{ name }} {% endif %}</div>
- <div>{{ form.name.label }}:  {{form.name(id='my-text-field')}}</div>
- <div>{{ form.story.label }}: {{ form.story(class="css_class")}} </div>
-
+ <div>{{ form.name.label(class='question') }}:  {{form.name(id='my-text-field', size = 40)}}</div>
+ <div>{{ form.story.label(class='question') }}: {{ form.story(id='my-text-field')}} </div>
+ {{ form.submit() }}
 
 </form>
 {% endblock %}

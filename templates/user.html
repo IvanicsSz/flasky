@@ -5,11 +5,12 @@
 {% block login %}{% endblock %}
 
 {%  block body %}
-<form method="POST">
+<form method="POST" action="">
+    {{ form.hidden_tag() }}
     {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
     <p> {{ user }}  {{ error }}</p>
-    <div style="color:#875e50">{{ form.username.label }}:  {{form.username()}}</div>
-    <div style="color:#875e50">{{ form.password.label }}:  {{form.password()}}</div>
+    <div style="color:#363887">{{ form.username.label }}:  {{form.username(size=50)}}</div>
+    <div style="color:#363887">{{ form.password.label }}:  {{form.password(size=50)}}</div>
     {{ form.submit() }}
   {% for message in get_flashed_messages() %}
     <div class=flash>{{ message }}</div>

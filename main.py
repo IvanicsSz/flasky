@@ -5,9 +5,9 @@ from peewee import *
 from psycopg2 import connect
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 import os
-from flask_wtf import Form
-from wtforms import StringField, SubmitField, TextAreaField, validators
-from wtforms.validators import DataRequired, Length
+from forms import *
+from models import *
+
 
 secret = os.urandom(24)
 DEBUG = True
@@ -45,38 +45,14 @@ def close_db(error):
         g.postgres_db.close()
 
 
-db = PostgresqlDatabase('story', **{'user': "szilard", 'host': 'localhost', 'port': 5432,
-                                    'password': '753951'})
+
 db.connect()
 
-
-class BaseModel(Model):
-    """A base model that will use our Postgresql database"""
-
-    class Meta:
-        database = db
-
-
-class Story(BaseModel):
-    first_name = CharField()
-    last_name = CharField()
-
-
-# List the tables here what you want to create...
 db.drop_tables([Story], safe=True)
 db.create_tables([Story], safe=True)
 
 
-class NameForm(Form):
-    name = StringField(u'What is your name?', validators=[DataRequired()])
-    story = TextAreaField(u'Second message', validators=[DataRequired()])
-    submit = SubmitField('Submit')
 
-
-class LoginForm(Form):
-    username = StringField(u'What is your user name?', validators=[DataRequired()])
-    password = StringField(u'What is your password?', validators=[DataRequired()])
-    submit = SubmitField('Submit')
 
 
 @app.route('/', methods=['GET', 'POST'])

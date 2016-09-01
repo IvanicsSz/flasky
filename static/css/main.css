@@ -8,13 +8,18 @@
 
 .header-container {
     border-bottom: 5px solid rgba(158, 175, 180, 0.95);
-    background: #0a0a14;
+    background: #8d9fb4;
     text-align: center;
     text-decoration: none;
     font-weight: bold;
 }
 .title {
-    color: #ff9555;
+    color: white;
+}
+
+.question {
+    font: 16px/26px Helvetica, Helvetica Neue, Arial;
+    color: #363887;
 }
 
 
@@ -26,7 +31,7 @@ textarea {
     box-sizing: border-box;
     border: 2px solid #363887;
     border-radius: 4px;
-    background-color: #9eafb4;
+    background-color: white;
     resize: vertical;
 }
 
@@ -34,8 +39,9 @@ textarea {
 
 #checkout form#my-text-field {
   width: 100%;
+    /*color: #5863b4;*/
     height: 150px;
-    background-color: #d58512;
+    background-color: #cfd0d5;
     resize: none;
 }
 
