@@ -1,14 +1,15 @@
 from flask import Flask, render_template, session, redirect, url_for, g, request,flash, make_response
 from datetime import datetime
-# from flask_peewee.db import Database
+import codecs, json
 from peewee import *
 from psycopg2 import connect
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
-
+import os
 from flask_wtf import Form
 from wtforms import StringField, SubmitField, TextAreaField, validators
 from wtforms.validators import DataRequired, Length
 
+secret = os.urandom(24)
 DEBUG = True
 SECRET_KEY = 'ssshhhh'
 USERNAME = 'admin'
@@ -82,7 +83,7 @@ class LoginForm(Form):
 def index():
     form = NameForm()
     # print(form.validate_on_submit())
-    if form.name.data:  # if form.validate_on_submit():
+    if request.method == "POST":  # if form.validate_on_submit():
         session['name'] = form.name.data
         jani = Story.create(first_name=form.name.data, last_name="Jani")
         jani.save()
@@ -122,10 +123,10 @@ def user(name):
 # to the request, session and g [1] objects
 # as well as the get_flashed_messages() function.
 # searchword = request.args.get('key', '')
-@app.errorhandler(404)
-def not_found(error):
-    resp = make_response(render_template('error.html'), 404)
-    resp.headers['X-Something'] = 'A value'
-    return resp
+# @app.errorhandler(404)
+# def not_found(error):
+#     resp = make_response(render_template('error.html'), 404)
+#     resp.headers['X-Something'] = 'A value'
+#     return resp
 if __name__ == '__main__':
     app.run(debug=True)

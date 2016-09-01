@@ -1,22 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h2>Login</h2>
-  {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
+{% extends "base.html" %}
+
+{% block title %}LOGIN{% endblock %}
+
+{% block login %}{% endblock %}
+
+{%  block body %}
 <form method="POST">
+    {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
     <p> {{ user }}  {{ error }}</p>
-    <div style="color:#0000FF">{{ form.username.label }}:  {{form.username()}}</div>
-    <div style="color:#0000FF">{{ form.password.label }}:  {{form.password()}}</div>
+    <div style="color:#875e50">{{ form.username.label }}:  {{form.username()}}</div>
+    <div style="color:#875e50">{{ form.password.label }}:  {{form.password()}}</div>
     {{ form.submit() }}
- </div>
   {% for message in get_flashed_messages() %}
     <div class=flash>{{ message }}</div>
   {% endfor %}
-
 </form>
-</body>
-</html>
+{% endblock %}

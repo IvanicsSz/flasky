@@ -2,9 +2,37 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="../static/css/main.css">
     <title>Title</title>
 </head>
 <body>
+<div class="header-container">
+    <header class="wrapper clearfix">
+        <h1 class="title">{% block title %}Scram Master{% endblock %}</h1>
+        {% block login %}
+        <nav>
+            <ul >
+              {% if not session.logged_in %}
+                <a  href="{{ url_for('login', class="title") }}">LOGIN</a>
+              {% else %}
+                <a  href="{{ url_for('logout', class="title") }}">LOGOUT</a>
+              {% endif %}
+{#                <li><a href="{{ url_for('login') }}">Login</a></li>#}
+{#                <li><a href="{{ url_for('logout') }}">Logout</a></li>#}
 
+            </ul>
+        </nav>
+        {% endblock %}
+    </header>
+</div>
+{% block body %}
+<form method="POST">
+    <div>{%  if name %} {{ name }} {% endif %}</div>
+ <div>{{ form.name.label }}:  {{form.name(id='my-text-field')}}</div>
+ <div>{{ form.story.label }}: {{ form.story(class="css_class")}} </div>
+
+
+</form>
+{% endblock %}
 </body>
 </html>
