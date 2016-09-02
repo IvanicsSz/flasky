@@ -6,10 +6,14 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 import os
 from forms import *
 from models import *
+from user import *
+
+
+
 
 secret = os.urandom(24)
 DEBUG = True
-SECRET_KEY = 'ssshhhh'
+SECRET_KEY = secret
 USERNAME = 'admin'
 PASSWORD = 'default'
 app = Flask(__name__)
@@ -19,11 +23,10 @@ app.config.from_object(__name__)
 
 def connect_db():
     try:
-        dbname = 'story'
-        con = connect(user='szilard', host='localhost', password='753951', port=5432)
+        con = connect(user=User.db_username, host='localhost', password=User.db_passworld, port=5432)
         con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
         cur = con.cursor()
-        cur.execute('CREATE DATABASE ' + dbname)
+        cur.execute('CREATE DATABASE ' + User.db_name)
         cur.close()
         con.close()
     except:
@@ -59,7 +62,7 @@ def index():
 
 @app.route("/story/<int:story_id>", methods=["GET", "POST"])
 def one_story(story_id):
-    stori = Story.get(Story.id == story_id)
+    stori = Story.get_story_id(story_id)
     if request.method == "POST":
         stori.story_title = request.form['story_title']
         stori.user_title = request.form['story_content']
@@ -69,6 +72,7 @@ def one_story(story_id):
         stori.status = request.form['status']
         stori.data = datetime.utcnow()
         stori.save()
+        flash("Your {}. story has been edited".format(story_id))
         return redirect(url_for('index'))
 
     return render_template('form.html', query=stori)
@@ -79,13 +83,11 @@ def story():
     # print(form.validate_on_submit())
     if request.method == "POST":  # if form.validate_on_submit():
 
-        print(request.form['estimation'])
         new = Story.create(story_title=request.form['story_title'], user_title=request.form['story_content'],
                            acceptance_criteria=request.form['acceptance_criteria'],
                            business_value=int(request.form['business_value']),
                            estimation=request.form['estimation'], status=request.form['status'], date=datetime.utcnow())
         new.save()
-        print("print2")
         return redirect(url_for('index'))
     return render_template('form.html', query="")
 
@@ -109,7 +111,7 @@ def login():
 
 @app.route("/del/<int:story_id>")
 def delete(story_id):
-    remove = Story.get(Story.id == story_id)
+    remove = Story.get_story_id(story_id)
     remove.delete_instance()
     flash('You have deleted the {} story!'.format(story_id))
     return redirect(url_for('index'))
