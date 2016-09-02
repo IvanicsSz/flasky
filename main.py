@@ -4,7 +4,7 @@ from peewee import *
 from psycopg2 import connect
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 import os
-# from forms import *
+from forms import *
 from models import *
 
 secret = os.urandom(24)
@@ -93,7 +93,7 @@ def story():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
-    # form = LoginForm()
+    form = LoginForm()
     flash("Let's log in")
     if request.method == 'POST':
         if request.form['username'] != app.config['USERNAME']:
@@ -102,14 +102,16 @@ def login():
             error = 'Invalid password'
         else:
             session['logged_in'] = True
+            flash("You are logged in {}".format(request.form['username']))
             return redirect(url_for('story'))
-    return render_template('user.html', error=error)
+    return render_template('user.html', form=form, error=error)
 
 
 @app.route("/del/<int:story_id>")
 def delete(story_id):
     remove = Story.get(Story.id == story_id)
-    remove.delete_instance()  # flash('You were logged out')
+    remove.delete_instance()
+    flash('You have deleted the {} story!'.format(story_id))
     return redirect(url_for('index'))
 
 

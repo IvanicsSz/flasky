@@ -1,10 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Sprint reporter</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}Sprint reporter{% endblock %}
+
+{% block login %}{{ super() }}{% endblock %}
+
+{%  block body %}
 
 <p><h2>User Story Manager</h2></p>
 
@@ -40,5 +39,4 @@
 
 </table>
 
-</body>
-</html>
+{% endblock %}
