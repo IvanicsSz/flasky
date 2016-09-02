@@ -15,7 +15,9 @@
               {% if not session.logged_in %}
                 <a  href="{{ url_for('login', class="title") }}">LOGIN</a>
               {% else %}
-               <a  href="{{ url_for('logout', class="title") }}">LOGOUT</a>
+                  <a  href="{{ url_for('index', class="title") }}">LIST</a>
+                  <a  href="{{ url_for('story', class="title") }}">FROM</a>
+                  <a  href="{{ url_for('logout', class="title") }}">LOGOUT</a>
               {% endif %}
 {#                <li><a href="{{ url_for('login') }}">Login</a></li>#}
 {#                <li><a href="{{ url_for('logout') }}">Logout</a></li>#}

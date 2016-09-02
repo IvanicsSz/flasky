@@ -18,22 +18,26 @@ app.config.from_object(__name__)
 
 
 def connect_db():
-    dbname = 'story'
-    con = connect(user='szilard', host='localhost', password='753951', port=5432)
-    con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-    cur = con.cursor()
-    cur.execute('CREATE DATABASE ' + dbname)
-    cur.close()
-    con.close()
+    try:
+        dbname = 'story'
+        con = connect(user='szilard', host='localhost', password='753951', port=5432)
+        con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+        cur = con.cursor()
+        cur.execute('CREATE DATABASE ' + dbname)
+        cur.close()
+        con.close()
+    except:
+        print("Database already exist")
 
 
+@app.before_first_request
 def get_db():
     """Opens a new database connection if there is none yet for the
     current application context.
     """
     if not hasattr(g, 'postgres_db'):
         g.postgres_db = connect_db()
-        db.connect()
+        # db.connect()
         # db.drop_tables([Story], safe=True)
         db.create_tables([Story], safe=True)
     return g.postgres_db
@@ -46,21 +50,26 @@ def close_db(error):
         g.postgres_db.close()
 
 
-
-
-
 @app.route("/")
 @app.route("/list")
 def index():
     stories = Story.select()
-
-
     return render_template('list.html', query=stories)
 
 
-@app.route("/story/<int:story_id>")
+@app.route("/story/<int:story_id>", methods=["GET", "POST"])
 def one_story(story_id):
     stori = Story.get(Story.id == story_id)
+    if request.method == "POST":
+        stori.story_title = request.form['story_title']
+        stori.user_title = request.form['story_content']
+        stori.acceptance_criteria = request.form['acceptance_criteria']
+        stori.business_value = int(request.form['business_value'])
+        stori.estimation = request.form['estimation']
+        stori.status = request.form['status']
+        stori.data = datetime.utcnow()
+        stori.save()
+        return redirect(url_for('index'))
 
     return render_template('form.html', query=stori)
 
@@ -70,11 +79,11 @@ def story():
     # print(form.validate_on_submit())
     if request.method == "POST":  # if form.validate_on_submit():
 
+        print(request.form['estimation'])
         new = Story.create(story_title=request.form['story_title'], user_title=request.form['story_content'],
                            acceptance_criteria=request.form['acceptance_criteria'],
-                           business_value=request.form['business_value'],
+                           business_value=int(request.form['business_value']),
                            estimation=request.form['estimation'], status=request.form['status'], date=datetime.utcnow())
-        print(request.form['story_title'], request.form['story_content'])
         new.save()
         print("print2")
         return redirect(url_for('index'))
@@ -97,16 +106,18 @@ def login():
     return render_template('user.html', error=error)
 
 
+@app.route("/del/<int:story_id>")
+def delete(story_id):
+    remove = Story.get(Story.id == story_id)
+    remove.delete_instance()  # flash('You were logged out')
+    return redirect(url_for('index'))
+
+
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)
     # flash('You were logged out')
     return 'You were logged out'
-
-
-@app.route('/user/<name>')
-def user(name):
-    return render_template('user.html', name=datetime.utcnow())
 
 
 # url_for('profile', name='John Doe')

@@ -1,17 +1,3 @@
-<!--List page-->
-<!--localhost:port/ and /list-->
-<!--Table containing all the data that the Product Backlog tab has in your sprint spreadsheet-->
-<!--so called "list of User Stories"-->
-<!--GET-->
-<!--DELETE-->
-
-<!--
-It should have a table containing all the data that the Product Backlog tab has in your sprint spreadsheet.
-In the end of every row, you should add a pen and a bin icon. Both should be links, the pen should redirect
-to the editing page of the given row and the bin icon should perform a DELETE on the given row.
-Add an "Add a new User Story" button to the page. It should redirect to the /add page.
--->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,7 +19,7 @@ Add an "Add a new User Story" button to the page. It should redirect to the /add
         <th width="10%" align="center" style="border:1px solid black;">Business Value</th>
         <th width="10%" align="center" style="border:1px solid black;">Estimation</th>
         <th width="10%" align="center" style="border:1px solid black;">Status</th>
-                <!--PUT-->
+
             {% for n in query %}
             <tr>
                 <td align="center" style="border:1px solid black;">{{n.id}}</td>
@@ -44,10 +30,10 @@ Add an "Add a new User Story" button to the page. It should redirect to the /add
                 <td align="center" style="border:1px solid black;">{{n.estimation}}</td>
                 <td align="center" style="border:1px solid black;">{{n.status}}</td>
                 <td width="10%" align="left" style="border:1px solid black;">
-                    <input type="image" id="edit" src="../static/pen.png" width="20" align="center" alt="Edit"></td>
-                        <!--DELETE-->
+                     <a  href="story/{{ n.id }}">EDIT</a></td>
+
                 <td width="10%" align="left" style="border:1px solid black;" >
-                    <input type="image" id="edit" src="../static/bin.png" width="20" align="center" alt="Delete"></td>
+                     <a  href="del/{{ n.id }}">DEL</a></td>
             </tr>
             {% endfor %}
     </tr>
