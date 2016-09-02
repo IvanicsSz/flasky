@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sprint reporter</title>
+</head>
+
+<body>
+<form action="" method="post">
+
+    <h2>User Story Manager - </h2>
+        <!--{% block content %}{% endblock %}-->
+
+    <p>Story Title</p>
+    <p><input name="story_title" size="78" value={{query.story_title}}></p>
+
+    <p>User Story</p>
+    <p><textarea name="story_content" rows="5" cols="60" value={{query.user_title}}></textarea></p>
+
+    <p>Acceptance Criteria</p>
+    <p><textarea name="acceptance_criteria" rows="7" cols="60" value={{query.acceptance_criteria}}></textarea></p>
+
+    <p>Business Value</p>
+    <p><input type="number" name="business_value" step="100" min="100" max="1500" value={{query.business_value}}></p>
+
+    <p>Estimation (h)</p>
+    <p><input type="number" name="estimation" step="0.5" min="0.5" max="40" value={{query.estimation}}></p>
+
+
+    <p>Status</p>
+    <p><select name="status">
+        <option>Planning</option>
+        <option>To Do</option>
+        <option>In Progress</option>
+        <option>Review</option>
+        <option>Done</option></select></p>
+
+    <p><button id="save" type="submit">Save</button></p>
+</form>
+
+</body>
+</html>

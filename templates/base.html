@@ -26,18 +26,7 @@
     </header>
 </div>
 {% block body %}
-<form method="POST" action="">
-    {{ form.hidden_tag() }}
-    <div>{%  if name %} {{ name }} {% endif %}</div>
- <div>{{ form.name.label(class='question') }}:  {{form.name(class='css_class', size=200)}}</div>
- <div>{{ form.story.label(class='question') }}: {{ form.story(id='my-text-field')}} </div>
- <div>{{ form.criteria.label(class='question') }}:  {{form.criteria(id='my-text-field')}}</div>
- <div>{{ form.business.label(class='question') }}: {{ form.business(id='my-text-field')}} </div>
- <div>{{ form.estimation.label(class='question') }}:  {{form.estimation(id='my-text-field')}}</div>
- <div>{{ form.status.label(class='question') }}: {{ form.status(id='my-text-field')}} </div>
-    {{ form.submit() }}
 
-</form>
 {% endblock %}
 </body>
 </html>

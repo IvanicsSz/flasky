@@ -1,12 +1,11 @@
-from flask import Flask, render_template, session, redirect, url_for, g, request,flash, make_response
+from flask import Flask, render_template, session, redirect, url_for, g, request, flash, make_response
 from datetime import datetime
 from peewee import *
 from psycopg2 import connect
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 import os
-from forms import *
+# from forms import *
 from models import *
-
 
 secret = os.urandom(24)
 DEBUG = True
@@ -34,6 +33,9 @@ def get_db():
     """
     if not hasattr(g, 'postgres_db'):
         g.postgres_db = connect_db()
+        db.connect()
+        # db.drop_tables([Story], safe=True)
+        db.create_tables([Story], safe=True)
     return g.postgres_db
 
 
@@ -43,27 +45,46 @@ def close_db(error):
     if hasattr(g, 'postgres_db'):
         g.postgres_db.close()
 
-db.connect()
 
-db.drop_tables([Story], safe=True)
-db.create_tables([Story], safe=True)
 
-@app.route('/', methods=['GET', 'POST'])
+
+
+@app.route("/")
+@app.route("/list")
 def index():
-    form = NameForm()
+    stories = Story.select()
+
+
+    return render_template('list.html', query=stories)
+
+
+@app.route("/story/<int:story_id>")
+def one_story(story_id):
+    stori = Story.get(Story.id == story_id)
+
+    return render_template('form.html', query=stori)
+
+
+@app.route('/story', methods=['GET', 'POST'])
+def story():
     # print(form.validate_on_submit())
     if request.method == "POST":  # if form.validate_on_submit():
-        session['name'] = form.name.data
-        jani = Story.create(first_name=form.name.data, last_name="Jani")
-        jani.save()
+
+        new = Story.create(story_title=request.form['story_title'], user_title=request.form['story_content'],
+                           acceptance_criteria=request.form['acceptance_criteria'],
+                           business_value=request.form['business_value'],
+                           estimation=request.form['estimation'], status=request.form['status'], date=datetime.utcnow())
+        print(request.form['story_title'], request.form['story_content'])
+        new.save()
+        print("print2")
         return redirect(url_for('index'))
-    return render_template('index.html', form=form, name=session.get('name'))
+    return render_template('form.html', query="")
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
-    form = LoginForm()
+    # form = LoginForm()
     flash("Let's log in")
     if request.method == 'POST':
         if request.form['username'] != app.config['USERNAME']:
@@ -72,8 +93,8 @@ def login():
             error = 'Invalid password'
         else:
             session['logged_in'] = True
-            return redirect(url_for('index'))
-    return render_template('user.html', form=form, error=error)
+            return redirect(url_for('story'))
+    return render_template('user.html', error=error)
 
 
 @app.route('/logout')
@@ -86,6 +107,8 @@ def logout():
 @app.route('/user/<name>')
 def user(name):
     return render_template('user.html', name=datetime.utcnow())
+
+
 # url_for('profile', name='John Doe')
 # url_for('login', next='/')
 # Inside templates you also have access
