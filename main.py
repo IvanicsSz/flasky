@@ -1,4 +1,5 @@
-from flask import Flask, render_template, session, redirect, url_for, g, request, flash, make_response
+from flask import Flask, render_template, session, redirect, url_for, g, request, flash, views
+from functools import wraps
 from datetime import datetime
 from peewee import *
 from psycopg2 import connect
@@ -53,6 +54,15 @@ def close_db(error):
         g.postgres_db.close()
 
 
+
+# def login_required(f):
+#     @wraps(f)
+#     def decorated_function(*args, **kwargs):
+#         if g.user is None:
+#             return redirect(url_for('login', next=request.url))
+#         return f(*args, **kwargs)
+#     return decorated_function
+
 @app.route("/")
 @app.route("/list")
 def index():
@@ -96,7 +106,7 @@ def story():
 def login():
     error = None
     form = LoginForm()
-    flash("Let's log in")
+    flash("Let's log in username: admin password: default")
     if request.method == 'POST':
         if request.form['username'] != app.config['USERNAME']:
             error = 'Invalid username'
@@ -104,6 +114,7 @@ def login():
             error = 'Invalid password'
         else:
             session['logged_in'] = True
+            g.user = request.form['username']
             flash("You are logged in {}".format(request.form['username']))
             return redirect(url_for('story'))
     return render_template('user.html', form=form, error=error)
@@ -122,6 +133,16 @@ def logout():
     session.pop('logged_in', None)
     # flash('You were logged out')
     return 'You were logged out'
+
+# class Method(views.MethodView):
+#     def get(self):
+#         pass
+#     def post(self):
+#         pass
+# app.add_url_rule('/',
+#                  view_func=Login.as_view('login'),
+#                  methods=["GET", "POST"])
+
 
 
 # url_for('profile', name='John Doe')
