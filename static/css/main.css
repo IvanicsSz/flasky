@@ -33,6 +33,14 @@ textarea {
     background-color: white;
     resize: vertical;
 }
+.login {
+    /*padding: 12px 20px;*/
+    box-sizing: border-box;
+    border: 2px solid #363887;
+    border-radius: 4px;
+    background-color: #d7cfc8;
+    resize: vertical;
+}
 
 
 

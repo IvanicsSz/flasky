@@ -10,8 +10,7 @@ from models import *
 from user import *
 
 
-
-
+# g.user = None
 secret = os.urandom(24)
 DEBUG = True
 SECRET_KEY = secret
@@ -55,18 +54,20 @@ def close_db(error):
 
 
 
-# def login_required(f):
-#     @wraps(f)
-#     def decorated_function(*args, **kwargs):
-#         if g.user is None:
-#             return redirect(url_for('login', next=request.url))
-#         return f(*args, **kwargs)
-#     return decorated_function
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get('username') is None:
+            return redirect(url_for('login', next=request.url))
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route("/")
 @app.route("/list")
+@login_required
 def index():
     stories = Story.select()
+    print(g.__dict__)
     return render_template('list.html', query=stories)
 
 
@@ -102,22 +103,30 @@ def story():
     return render_template('form.html', query="")
 
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    error = None
-    form = LoginForm()
-    flash("Let's log in username: admin password: default")
-    if request.method == 'POST':
-        if request.form['username'] != app.config['USERNAME']:
-            error = 'Invalid username'
-        elif request.form['password'] != app.config['PASSWORD']:
-            error = 'Invalid password'
-        else:
-            session['logged_in'] = True
-            g.user = request.form['username']
-            flash("You are logged in {}".format(request.form['username']))
-            return redirect(url_for('story'))
-    return render_template('user.html', form=form, error=error)
+
+# @app.route('/login', methods=['GET', 'POST'])
+
+class Login(views.MethodView):
+
+    def get(self):
+        error = None
+        form = LoginForm()
+        flash("Let's log in username: admin password: default")
+        return render_template('user.html', form=form, error=error)
+# def login():
+    def post(self):
+        if request.method == 'POST':
+            if request.form['username'] != app.config['USERNAME']:
+                error = 'Invalid username'
+            elif request.form['password'] != app.config['PASSWORD']:
+                error = 'Invalid password'
+            else:
+                session['logged_in'] = True
+                session['username'] = request.form['username']
+                # print(session['username'])
+
+                flash("You are logged in {}".format(request.form['username']))
+                return redirect(url_for('index'))
 
 
 @app.route("/del/<int:story_id>")
@@ -128,20 +137,24 @@ def delete(story_id):
     return redirect(url_for('index'))
 
 
-@app.route('/logout')
-def logout():
-    session.pop('logged_in', None)
-    # flash('You were logged out')
-    return 'You were logged out'
+# @app.route('/logout')
+class Logout(views.MethodView):
+    def get(self):
+        session.pop('logged_in', None)
+        session.pop('username', None)
+        # flash('You were logged out')
+        return 'You were logged out'
 
-# class Method(views.MethodView):
-#     def get(self):
-#         pass
-#     def post(self):
-#         pass
-# app.add_url_rule('/',
-#                  view_func=Login.as_view('login'),
-#                  methods=["GET", "POST"])
+
+app.add_url_rule('/login',
+                 view_func=Login.as_view('login'),
+                 methods=["GET", "POST"])
+
+app.add_url_rule('/logout',
+                 view_func=Logout.as_view('logout'))
+
+
+
 
 
 
