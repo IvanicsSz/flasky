@@ -15,10 +15,11 @@
               {% if not session.logged_in %}
                 <a  href="{{ url_for('login', class="title") }}">LOGIN</a>
               {% else %}
-                   <div style="color:#262b87" align="left">{% if session.username %}{{session.username}}{% endif %}</div>
+                   <h3 style="color:#262b87" align="left">{% if session.username %}{{session.username}}{% endif %}</h3>
                   <a  href="{{ url_for('index', class="title") }}" style="color:#262b87" >LIST</a>
                   <a  href="{{ url_for('story', class="title") }}" style="color:#262b87">FROM</a>
                   <a  href="{{ url_for('logout', class="title") }}" style="color:#262b87">LOGOUT</a>
+
               {% endif %}
 {#                <li><a href="{{ url_for('login') }}">Login</a></li>#}
 {#                <li><a href="{{ url_for('logout') }}">Logout</a></li>#}

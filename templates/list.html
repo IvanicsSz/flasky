@@ -29,10 +29,16 @@
                 <td align="center" style="border:1px solid black;">{{n.estimation}}</td>
                 <td align="center" style="border:1px solid black;">{{n.status}}</td>
                 <td width="10%" align="left" style="border:1px solid black;">
-                     <a  href="story/{{ n.id }}">EDIT</a></td>
+                     <a  href="story/{{ n.id }}">
+                         <input type="image" id="edit" src="../static/pen.png" width="20" align="center" alt="Edit">
+                     </a>
+                </td>
 
                 <td width="10%" align="left" style="border:1px solid black;" >
-                     <a  href="del/{{ n.id }}">DEL</a></td>
+                     <a  href="del/{{ n.id }}">
+                         <input type="image" id="edit" src="../static/Delete-52.png" width="20" align="center" alt="Edit">
+                     </a>
+                </td>
             </tr>
             {% endfor %}
     </tr>

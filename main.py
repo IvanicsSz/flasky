@@ -9,7 +9,6 @@ from forms import *
 from models import *
 from user import *
 
-
 # g.user = None
 secret = os.urandom(24)
 DEBUG = True
@@ -53,14 +52,15 @@ def close_db(error):
         g.postgres_db.close()
 
 
-
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get('username') is None:
             return redirect(url_for('login', next=request.url))
         return f(*args, **kwargs)
+
     return decorated_function
+
 
 @app.route("/")
 @app.route("/list")
@@ -103,7 +103,6 @@ def story():
     return render_template('form.html', query="")
 
 
-
 # @app.route('/login', methods=['GET', 'POST'])
 
 class Login(views.MethodView):
@@ -113,7 +112,8 @@ class Login(views.MethodView):
         form = LoginForm()
         flash("Let's log in username: admin password: default")
         return render_template('user.html', form=form, error=error)
-# def login():
+
+    # def login():
     def post(self):
         if request.method == 'POST':
             if request.form['username'] != app.config['USERNAME']:
@@ -129,14 +129,6 @@ class Login(views.MethodView):
                 return redirect(url_for('index'))
 
 
-@app.route("/del/<int:story_id>")
-def delete(story_id):
-    remove = Story.get_story_id(story_id)
-    remove.delete_instance()
-    flash('You have deleted the {} story!'.format(story_id))
-    return redirect(url_for('index'))
-
-
 # @app.route('/logout')
 class Logout(views.MethodView):
     def get(self):
@@ -146,17 +138,20 @@ class Logout(views.MethodView):
         return 'You were logged out'
 
 
+@app.route("/del/<int:story_id>")
+def delete(story_id):
+    remove = Story.get_story_id(story_id)
+    remove.delete_instance()
+    flash('You have deleted the {} story!'.format(story_id))
+    return redirect(url_for('index'))
+
+
 app.add_url_rule('/login',
                  view_func=Login.as_view('login'),
                  methods=["GET", "POST"])
 
 app.add_url_rule('/logout',
                  view_func=Logout.as_view('logout'))
-
-
-
-
-
 
 # url_for('profile', name='John Doe')
 # url_for('login', next='/')

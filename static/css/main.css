@@ -13,8 +13,11 @@
     font-weight: bold;
 }
 .title {
-    color: white;
+    color: whitesmoke;
+    font-weight: bold;
+
 }
+
 
 .question {
     font: 16px/26px Helvetica, Helvetica Neue, Arial;
